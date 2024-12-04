@@ -47,7 +47,7 @@
             </div>
 
             <!-- Transactions Dropdown -->
-            <div class="navbar-dropdown" onmouseover="toggleDropdown('transactions')"
+            <!-- <div class="navbar-dropdown" onmouseover="toggleDropdown('transactions')"
                 onmouseout="toggleDropdown('transactions')">
                 <span class="navbar-dropdown-title">
                     CUSTOMERS <i class="fas fa-chevron-down dropdown-arrow-icon"></i>
@@ -62,10 +62,14 @@
                     <a href="/repairstable">Repairs</a>
                     <a href="/urd_purchase">URD Purchase</a>
                 </div>
-            </div>
+            </div> -->
+
+            <div class="navbar-item">
+    <a href="customer_table.php" class="navbar-link">CUSTOMERS</a>
+</div>
 
             <!-- Reports Dropdown -->
-            <div class="navbar-dropdown" onmouseover="toggleDropdown('reports')" onmouseout="toggleDropdown('reports')">
+            <!-- <div class="navbar-dropdown" onmouseover="toggleDropdown('reports')" onmouseout="toggleDropdown('reports')">
                 <span class="navbar-dropdown-title">
                     VENDORS <i class="fas fa-chevron-down dropdown-arrow-icon"></i>
                 </span>
@@ -79,15 +83,21 @@
                     <a href="/barcodeprinting">Barcode Printing Report</a>
                     <a href="/cashReport">Cash Report</a>
                 </div>
-            </div>
-            <div class="navbar-dropdown" onmouseover="toggleDropdown('utility')" onmouseout="toggleDropdown('utility')">
+            </div> -->
+            <div class="navbar-item">
+    <a href="vendors.php" class="navbar-link">VENDORS</a>
+</div>
+            <!-- <div class="navbar-dropdown" onmouseover="toggleDropdown('utility')" onmouseout="toggleDropdown('utility')">
                 <span class="navbar-dropdown-title">
                     EMPLOYEES <i class="fas fa-chevron-down dropdown-arrow-icon"></i>
                 </span>
                 <div class="navbar-dropdown-content">
-                    <a href="/invoice">Invoice</a>
+                    <a href="emp-form.php">Employees</a>
                 </div>
-            </div>
+            </div> -->
+            <div class="navbar-item">
+    <a href="manage_employee.php" class="navbar-link">EMPLOYEES</a>
+</div>
             <div class="navbar-dropdown" onmouseover="toggleDropdown('utility')" onmouseout="toggleDropdown('utility')">
                 <span class="navbar-dropdown-title">
                     PAYMENTS <i class="fas fa-chevron-down dropdown-arrow-icon"></i>

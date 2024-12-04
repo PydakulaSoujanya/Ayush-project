@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css">
   <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
     .input-field-container {
       position: relative;
       margin-bottom: 15px;
@@ -48,11 +52,57 @@
       background: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 10px;
-      overflow: hidden; /* Prevents overflow issues */
+      overflow: hidden;
     }
 
     #calendar {
       max-width: 100%;
+    }
+
+    /* Modal adjustments */
+    .modal-dialog {
+      margin: 1.75rem auto;
+      max-width: 800px;
+    }
+
+    .modal-content {
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .modal-header {
+      background-color: #A26D2B;
+      color: white;
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .modal-title {
+      font-size: 18px;
+    }
+
+    .close {
+      color: white;
+      opacity: 0.8;
+    }
+
+    .close:hover {
+      opacity: 1;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      color: #A26D2B;
+    }
+
+    .btn-primary {
+      background-color: #A26D2B;
+      border-color: #A26D2B;
+    }
+
+    .btn-primary:hover {
+      background-color: #854E1C;
+      border-color: #854E1C;
     }
   </style>
 </head>
@@ -68,46 +118,67 @@
 
   <!-- Modal -->
   <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="eventModalLabel">Allotment Form</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="assignmentForm">
-            <div class="form-group">
-              <label for="traineeName">Trainee Name</label>
-              <input type="text" class="form-control" id="traineeName" placeholder="Enter trainee name" required>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="eventModalLabel">Allotment Form</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" enctype="multipart/form-data" id="assignmentForm">
+          <!-- Row 1 -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="traineeName">Trainee Name</label>
+                <input type="text" class="form-control" id="traineeName" name="traineeName" placeholder="Enter trainee name" required>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="customerName">Customer Name</label>
-              <input type="text" class="form-control" id="customerName" placeholder="Enter customer name" required>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="customerName">Customer Name</label>
+                <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Enter customer name" required>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="customerMobile">Customer Mobile Number</label>
-              <input type="text" class="form-control" id="customerMobile" placeholder="Enter customer mobile number" required>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="fromDate">From Date</label>
+                <input type="date" class="form-control" id="fromDate" name="fromDate" required>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="customerAddress">Customer Address</label>
-              <textarea class="form-control" id="customerAddress" rows="3" placeholder="Enter customer address" required></textarea>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="toDate">To Date</label>
+                <input type="date" class="form-control" id="toDate" name="toDate" required>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="fromDate">From Date</label>
-              <input type="date" class="form-control" id="fromDate" required>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="remarks">Remarks</label>
+                <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Enter remarks"></textarea>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="toDate">To Date</label>
-              <input type="date" class="form-control" id="toDate" required>
-            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
             <button type="submit" class="btn btn-primary">Save</button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>

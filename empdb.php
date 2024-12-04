@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $police_verification = $_POST['police_verification'];
     $daily_rate = $_POST['daily_rate'];
     $status = $_POST['status'];
-    $termination_date = $_POST['termination_date'];
+    // $termination_date = $_POST['termination_date'];
     $bank_name = $_POST['bank_name'];
     $bank_account_no = $_POST['bank_account_no'];
     $ifsc_code = $_POST['ifsc_code'];
@@ -33,14 +33,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Insert data into database
-    $sql = "INSERT INTO emp_info (name, dob, gender, phone, email, role, qualification, experience, doj, aadhar, police_verification, daily_rate, status, termination_date, document, bank_name, bank_account_no, ifsc_code, address)
-            VALUES ('$name', '$dob', '$gender', '$phone', '$email', '$role', '$qualification', '$experience', '$doj', '$aadhar', '$police_verification', '$daily_rate', '$status', '$termination_date', '$document', '$bank_name', '$bank_account_no', '$ifsc_code', '$address')";
+    $sql = "INSERT INTO emp_info (name, dob, gender, phone, email, role, qualification, experience, doj, aadhar, police_verification, daily_rate, status, document, bank_name, bank_account_no, ifsc_code, address)
+            VALUES ('$name', '$dob', '$gender', '$phone', '$email', '$role', '$qualification', '$experience', '$doj', '$aadhar', '$police_verification', '$daily_rate', '$status', '$document', '$bank_name', '$bank_account_no', '$ifsc_code', '$address')";
 
-    if (mysqli_query($conn, $sql)) {
-        echo "Record inserted successfully";
-    } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-    }
+if (mysqli_query($conn, $sql)) {
+    $_SESSION['alert_message'] = "Employee record added successfully!";
+    $_SESSION['alert_type'] = "success"; // Type of alert (success, error, etc.)
+} else {
+    $_SESSION['alert_message'] = "Error: " . mysqli_error($conn);
+    $_SESSION['alert_type'] = "danger"; // Type of alert (success, error, etc.)
+}
+
+// Redirect back to the form
+header("Location: emp-form.php");
+exit;
 }
 
 mysqli_close($conn);
