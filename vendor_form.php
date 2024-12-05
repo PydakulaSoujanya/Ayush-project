@@ -58,7 +58,7 @@ if (!isset($_SESSION['user_id'])) {
 <?php include('navbar.php'); ?>
   <div class="container mt-7">
     <h3 class="mb-4">Vendor Form</h3>
-    <form action="vendordb.php" method="POST">
+    <form action="vendordb.php" method="POST" enctype="multipart/form-data">
       <div class="row">
         <div class="col-md-6">
           <div class="input-field-container">
@@ -83,7 +83,7 @@ if (!isset($_SESSION['user_id'])) {
   <div class="col-md-6">
       <div class="input-field-container">
         <label class="input-label">Documents</label>
-        <input type="file" name="document" id="document" class="styled-input" />
+        <input type="file" name="supporting_documents" id="supporting_documents" class="styled-input" />
       </div>
     </div>
   <!-- <div class="col-md-6">

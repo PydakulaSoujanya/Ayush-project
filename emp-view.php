@@ -23,6 +23,8 @@ if ($result && $result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
     .input-field-container {
       position: relative;
@@ -152,12 +154,7 @@ if ($result && $result->num_rows > 0) {
 
     <!-- Daily Rate, Status, Termination Date, Document -->
     <div class="row">
-        <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Daily Rate</label>
-                <input type="text" value="<?= $employee['daily_rate']; ?>" class="styled-input" readonly>
-            </div>
-        </div>
+      
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Status</label>
@@ -166,20 +163,48 @@ if ($result && $result->num_rows > 0) {
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
-                <label class="input-label">Termination Date</label>
-                <input type="date" value="<?= $employee['termination_date']; ?>" class="styled-input" readonly>
+            <label class="input-label">Daily Rate(8)</label>
+            <input type="number" value="<?= $employee['daily_rate8']; ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
-                <label class="input-label">Document</label>
-                <input type="text" value="<?= $employee['document']; ?>" class="styled-input" readonly>
+            <label class="input-label">Daily Rate(12)</label>
+            <input type="number" value="<?= $employee['daily_rate12']; ?>" class="styled-input" readonly>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="input-field-container">
+            <label class="input-label">Daily Rate(24)</label>
+            <input type="number" value="<?= $employee['daily_rate24']; ?>" class="styled-input" readonly>
+            </div>
+        </div>
+        <div class="col-md-3">
+    <div class="input-field-container">
+        <div class="row">
+            <div class="col-md-10">
+            <label class="input-label">Document</label>
+            <input type="text" value="<?= $employee['document']; ?>" class="styled-input" readonly>
+            </div>
+            <div class="col-md-2">
+ <!-- View existing document as an icon link -->
+ <?php if (!empty($employee['document'])): ?>
+            <p class="uploaded-document mt-2">
+                <a href="<?= $employee['document']; ?>" target="_blank" title="View Document">
+                    <i class="bi bi-file-earmark-text" style="font-size: 24px; color: #007bff;"></i>
+                </a>
+            </p>
+        <?php else: ?>
+            <p class="uploaded-document mt-2 text-muted">No document uploaded.</p>
+        <?php endif; ?>
+            </div>
+        </div>
+    
+       
     </div>
+</div>
 
-    <!-- Bank Name, Account No, IFSC Code, Address -->
-    <div class="row">
+
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Bank Name</label>
@@ -198,7 +223,32 @@ if ($result && $result->num_rows > 0) {
                 <input type="text" value="<?= $employee['ifsc_code']; ?>" class="styled-input" readonly>
             </div>
         </div>
-        <div class="col-md-3">
+
+    </div>
+<!-- Hidden Fields for Vendor Name and Contact -->
+<div class="col-md-3" id="vendorFields" style="display: none;">
+  <div class="input-field-container">
+  <!-- <input type="text" name="vendor_id" class="styled-input"  /> -->
+    <label class="input-label">Vendor Name</label>
+    <select name="vendor_name" id="vendor_name" class="styled-input" required>
+            <option value="" disabled selected>Select Vendor</option>
+        </select>
+    <!-- <input type="text" name="vendor_name" class="styled-input" placeholder="Enter Vendor Name" /> -->
+  </div>
+</div>
+<div class="col-md-3" id="vendorContactField" style="display: none;">
+  <div class="input-field-container">
+    <label class="input-label">Vendor Contact Number</label>
+    <input type="text" name="vendor_contact" class="styled-input" placeholder="Enter Vendor Contact Number" pattern="[0-9]{10}" />
+  </div>
+</div>
+
+    <!-- Bank Name, Account No, IFSC Code, Address -->
+    <div class="row">
+       
+        
+       
+        <div class="col-md-6">
             <div class="input-field-container">
                 <label class="input-label">Address</label>
                 <input type="text" value="<?= $employee['address']; ?>" class="styled-input" readonly>
@@ -207,7 +257,7 @@ if ($result && $result->num_rows > 0) {
     </div>
 
     <div class="mt-3">
-        <a href="manage_employee.php" class="btn btn-primary">Back to List</a>
+        <a href="table.php" class="btn btn-primary">Back to List</a>
     </div>
 </form>
 

@@ -21,9 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $doj = $_POST['doj'];
     $aadhar = $_POST['aadhar'];
     $police_verification = $_POST['police_verification'];
-    $daily_rate = $_POST['daily_rate'];
     $status = $_POST['status'];
-    $termination_date = empty($_POST['termination_date']) ? null : $_POST['termination_date'];
+    $daily_rate8 = $_POST['daily_rate8'];
+    $daily_rate12 = $_POST['daily_rate12'];
+    $daily_rate24 = $_POST['daily_rate24'];
     $bank_name = $_POST['bank_name'];
     $bank_account_no = $_POST['bank_account_no'];
     $ifsc_code = $_POST['ifsc_code'];
@@ -41,31 +42,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Construct the query
     $query = "UPDATE emp_info 
-              SET name = '$name', dob = '$dob', gender = '$gender', phone = '$phone', email = '$email', 
-                  role = '$role', qualification = '$qualification', experience = '$experience', 
-                  doj = '$doj', aadhar = '$aadhar', police_verification = '$police_verification', 
-                  daily_rate = '$daily_rate', status = '$status', termination_date = ?, 
-                  bank_name = '$bank_name', bank_account_no = '$bank_account_no', 
-                  ifsc_code = '$ifsc_code', address = '$address'";
+              SET name = ?, dob = ?, gender = ?, phone = ?, email = ?, 
+                  role = ?, qualification = ?, experience = ?, doj = ?, 
+                  aadhar = ?, police_verification = ?, status = ?, 
+                  daily_rate8 = ?, daily_rate12 = ?, daily_rate24 = ?, 
+                  bank_name = ?, bank_account_no = ?, ifsc_code = ?, 
+                  address = ?" . ($document ? ", document = ?" : "") . " 
+              WHERE id = ?";
 
-    // Add document field only if a new file was uploaded
-    if ($document) {
-        $query .= ", document = '$document'";
-    }
-    
-    $query .= " WHERE id = '$employee_id'";
-
-    // Prepare and execute the query
+    // Prepare the statement
     $stmt = $conn->prepare($query);
-    if ($termination_date === null) {
-        $stmt->bind_param('s', $termination_date); // Bind null if no termination date is provided
+    
+    // Bind parameters dynamically
+    if ($document) {
+        $stmt->bind_param(
+            'sssssssssssssssisssisi',
+            $name, $dob, $gender, $phone, $email,
+            $role, $qualification, $experience, $doj,
+            $aadhar, $police_verification, $status,
+            $daily_rate8, $daily_rate12, $daily_rate24,
+            $bank_name, $bank_account_no, $ifsc_code,
+            $address, $document, $employee_id
+        );
+    } else {
+        $stmt->bind_param(
+            'sssssssssssssssssssi',
+            $name, $dob, $gender, $phone, $email,
+            $role, $qualification, $experience, $doj,
+            $aadhar, $police_verification, $status,
+            $daily_rate8, $daily_rate12, $daily_rate24,
+            $bank_name, $bank_account_no, $ifsc_code,
+            $address, $employee_id
+        );
     }
 
+    // Execute the statement
     if ($stmt->execute()) {
-        header('Location: manage_employee.php?update_success=1'); // Redirect on success
-        exit;
+        echo "<script>
+                alert('Successfully updated record');
+                window.location.href = 'table.php';
+              </script>";
     } else {
-        die("Error updating employee: " . $stmt->error);
+        echo "Error: " . $stmt->error;
     }
 } else {
     die('Invalid request method.');

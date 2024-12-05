@@ -105,6 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Employee</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
     .input-field-container {
       position: relative;
@@ -190,15 +192,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
             </div>
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Role</label>
-                <select name="role" class="styled-input" required>
-                    <option value="admin" <?= $employee['role'] == 'admin' ? 'selected' : ''; ?>>Care Taker</option>
-                    <option value="manager" <?= $employee['role'] == 'manager' ? 'selected' : ''; ?>>Fully Trained Nurse</option>
-                    <option value="user" <?= $employee['role'] == 'user' ? 'selected' : ''; ?>>Semi Trained Nurse</option>
-                </select>
-            </div>
-        </div>
+    <div class="input-field-container">
+        <label class="input-label">Role</label>
+        <select name="role" class="styled-input" required>
+            <option value="" disabled <?= empty($employee['role']) ? 'selected' : ''; ?>>Select Role</option>
+            <option value="care_taker" <?= $employee['role'] == 'care_taker' ? 'selected' : ''; ?>>Care Taker</option>
+            <option value="nanny" <?= $employee['role'] == 'nanny' ? 'selected' : ''; ?>>Nanny</option>
+            <option value="fully_trained_nurse" <?= $employee['role'] == 'fully_trained_nurse' ? 'selected' : ''; ?>>Fully Trained Nurse</option>
+            <option value="semi_trained_nurse" <?= $employee['role'] == 'semi_trained_nurse' ? 'selected' : ''; ?>>Semi Trained Nurse</option>
+        </select>
+    </div>
+</div>
+
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Qualification</label>
@@ -246,16 +251,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
-                <label class="input-label">Daily Rate</label>
-                <input type="number" name="daily_rate" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate']); ?>" step="0.01" required />
-            </div>
-        </div>
-    </div>
-
-    <!-- Row 4 -->
-    <div class="row">
-        <div class="col-md-3">
-            <div class="input-field-container">
                 <label class="input-label">Status</label>
                 <select name="status" class="styled-input" required>
                     <option value="active" <?= $employee['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
@@ -263,28 +258,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                 </select>
             </div>
         </div>
-        <div class="col-md-3">
+    </div>
+
+    <!-- Row 4 -->
+    <div class="row">
+        
+         <div class="col-md-3">
             <div class="input-field-container">
-                <label class="input-label">Termination Date</label>
-                <input type="date" name="termination_date" class="styled-input" value="<?= htmlspecialchars($employee['termination_date']); ?>" />
+                <label class="input-label">Daily Rate(8)</label>
+                <input type="number" name="daily_rate8" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate8']); ?>" required />
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
-                <label class="input-label">Documents</label>
-                <input type="file" name="document" class="styled-input" />
+                <label class="input-label">Daily Rate(12)</label>
+                <input type="number" name="daily_rate12" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate12']); ?>" required />
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="input-field-container">
+                <label class="input-label">Daily Rate(24)</label>
+                <input type="number" name="daily_rate24" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate24']); ?>" required />
+            </div>
+        </div>
+        <div class="col-md-3">
+    <div class="input-field-container">
+    <div class="row">
+    <div class="col-md-10">
+        <label class="input-label">Documents</label>
+        
+        <!-- Input for uploading a new document -->
+        <input type="file" name="document" class="styled-input" />
+</div>
+<div class="col-md-2">
+        <!-- Display the currently uploaded document -->
+        <?php if (!empty($employee['document'])): ?>
+            <p class="uploaded-document">
+                <a href="<?= $employee['document']; ?>" target="_blank" title="View Document">
+                    <i class="bi bi-file-earmark-text" style="font-size: 24px; color: #007bff;"></i>
+                </a>
+            </p>
+        <?php else: ?>
+            <p class="uploaded-document mt-2 text-muted">No document uploaded.</p>
+        <?php endif; ?>
+    </div>
+</div>
+</div>
+</div>
+
+
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Bank Name</label>
                 <input type="text" name="bank_name" class="styled-input" value="<?= htmlspecialchars($employee['bank_name']); ?>" required />
             </div>
         </div>
-    </div>
-
-    <!-- Row 5 -->
-    <div class="row">
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Bank Account Number</label>
@@ -297,6 +325,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                 <input type="text" name="ifsc_code" class="styled-input" value="<?= htmlspecialchars($employee['ifsc_code']); ?>" required />
             </div>
         </div>
+    </div>
+
+    <!-- Row 5 -->
+    <div class="row">
+       
+       
         <div class="col-md-6">
             <div class="input-field-container">
                 <label class="input-label">Address</label>
