@@ -1,9 +1,39 @@
+<?php
+include('navbar.php');
+include('config.php'); // Include your database connection file
+
+// Handle month and year selection
+$selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
+$selectedMonth = isset($_GET['month']) ? (int)$_GET['month'] : date('m');
+$daysInMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
+
+// Fetch employees from emp_info table
+$employees = [];
+$employeeQuery = "SELECT id, name FROM emp_info WHERE status = 'active'";
+$result = $conn->query($employeeQuery);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $employees[] = $row;
+    }
+}
+
+// Fetch customers from customer_master table
+$customers = [];
+$customerQuery = "SELECT id, patient_name FROM customer_master";
+$result = $conn->query($customerQuery);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $customers[] = $row;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calendar</title>
+  <title>Employee Calendar</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
     table {
@@ -20,27 +50,48 @@
     th {
       background-color: #f2f2f2;
     }
-
-    .highlight-green {
-      background-color: #c8e6c9; /* Light green */
-    }
-
-    .highlight-orange {
-      background-color: #ffe0b2; /* Light orange */
-    }
-
-    .highlight-blue {
-      background-color: #bbdefb; /* Light blue */
-    }
   </style>
 </head>
 <body>
-    <?php include('navbar.php'); ?>
+
+  <?php
+include('navbar.php'); ?>
   <div class="container mt-7">
     <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="text-center mb-0">Employee Calendar</h3>
-    <button class="btn btn-primary" onclick="addNewAllotment()">New Allotment</button>
-</div>
+      <h3 class="text-center mb-0">Employee Calendar - <?= date('F Y', strtotime("$selectedYear-$selectedMonth-01")) ?></h3>
+      <a href="allotment_form.php" class="btn btn-primary">New Allotment</a>
+    </div>
+
+    <!-- Month and Year Selection -->
+    <form method="GET" class="mb-4">
+      <div class="form-row">
+        <div class="col-md-5">
+          <select name="month" class="form-control">
+            <?php
+            for ($m = 1; $m <= 12; $m++) {
+              $monthName = date('F', mktime(0, 0, 0, $m, 1));
+              $selected = ($m == $selectedMonth) ? 'selected' : '';
+              echo "<option value=\"$m\" $selected>$monthName</option>";
+            }
+            ?>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <select name="year" class="form-control">
+            <?php
+            $currentYear = date('Y');
+            for ($y = $currentYear - 5; $y <= $currentYear + 5; $y++) {
+              $selected = ($y == $selectedYear) ? 'selected' : '';
+              echo "<option value=\"$y\" $selected>$y</option>";
+            }
+            ?>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-block">View</button>
+        </div>
+      </div>
+    </form>
 
     <div class="table-responsive">
       <table class="table table-bordered">
@@ -48,135 +99,35 @@
           <tr>
             <th>Emp Name</th>
             <th>Customer Name</th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-            <th>6</th>
-            <th>7</th>
+            <?php
+            // Generate table headers for the days of the selected month
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+              echo "<th>$day</th>";
+            }
+            ?>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Emp1</td>
-            <td>Cus1</td>
-            <td class="highlight-green">8</td>
-            <td class="highlight-green">8</td>
-            <td class="highlight-green">8</td>
-            <td class="highlight-green">8</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>Cus10</td>
-            <td class="highlight-green">4</td>
-            <td class="highlight-green">4</td>
-            <td class="highlight-green">4</td>
-            <td class="highlight-green">4</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Emp2</td>
-            <td>Cus2</td>
-            <td></td>
-            <td></td>
-            <td class="highlight-orange">12</td>
-            <td class="highlight-orange">12</td>
-            <td class="highlight-orange">12</td>
-            <td class="highlight-orange">12</td>
-            <td class="highlight-orange">12</td>
-          </tr>
-          <tr>
-            <td>Emp3</td>
-            <td>Cus3</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Emp4</td>
-            <td>Cus4</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="highlight-blue">24</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Emp5</td>
-            <td>Cus5</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Emp6</td>
-            <td>Cus6</td>
-            <td class="highlight-orange">8</td>
-            <td></td>
-            <td class="highlight-blue">12</td>
-            <td class="highlight-blue">24</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Emp7</td>
-            <td>Cus7</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Emp8</td>
-            <td>Cus8</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Emp9</td>
-            <td>Cus9</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <?php
+          // Generate rows dynamically for each employee and customer
+          foreach ($employees as $employee) {
+              foreach ($customers as $customer) {
+                  echo "<tr>";
+                  echo "<td>{$employee['name']}</td>";
+                  echo "<td>{$customer['patient_name']}</td>";
+
+                  // Generate empty cells for each day of the month
+                  for ($day = 1; $day <= $daysInMonth; $day++) {
+                      echo "<td></td>";
+                  }
+
+                  echo "</tr>";
+              }
+          }
+          ?>
         </tbody>
       </table>
     </div>
   </div>
-  <script>
-    function addNewAllotment() {
-      alert("New Allotment button clicked!");
-      // Add custom logic for new allotments here
-    }
-  </script>
 </body>
 </html>
