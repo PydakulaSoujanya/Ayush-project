@@ -1,128 +1,131 @@
+<?php
+// Include database configuration and navbar
+include 'config.php';
+include 'navbar.php';
+
+// Check database connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Pagination variables
+$pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 5;
+$pageIndex = isset($_GET['pageIndex']) ? intval($_GET['pageIndex']) : 0;
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Calculate the starting row for the query
+$start = $pageIndex * $pageSize;
+
+// Query to fetch data with pagination, search, and ordering
+$sql = "SELECT id, patient_status, patient_name, relationship, full_name, emergency_contact_number, email, gender, date_of_joining, blood_group, medical_conditions, patient_age, care_requirements, mobility_status, address, care_aadhar, discharge, created_at 
+        FROM customer_master 
+        WHERE patient_name LIKE ? 
+        ORDER BY created_at DESC 
+        LIMIT ?, ?";
+$stmt = $conn->prepare($sql);
+$searchTermWildcard = '%' . $searchTerm . '%';
+$stmt->bind_param('sii', $searchTermWildcard, $start, $pageSize);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Query to get the total number of records
+$countSql = "SELECT COUNT(*) as total 
+             FROM customer_master 
+             WHERE patient_name LIKE ?";
+$countStmt = $conn->prepare($countSql);
+$countStmt->bind_param('s', $searchTermWildcard);
+$countStmt->execute();
+$countResult = $countStmt->get_result();
+$countRow = $countResult->fetch_assoc();
+$totalRecords = $countRow['total'];
+
+// Close the statement and connection
+$stmt->close();
+$countStmt->close();
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Styled Form</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <title>Customer Master Table</title>
   <style>
-    .dataTable_wrapper {
-      padding: 20px;
-    }
-
-    .dataTable_search input {
-      max-width: 200px;
-    }
-
-    .dataTable_headerRow th,
-    .dataTable_row td {
-      border: 1px solid #dee2e6; /* Add borders for columns */
-    }
-
-    .dataTable_headerRow {
-      background-color: #f8f9fa;
-      font-weight: bold;
-    }
-
-    .dataTable_row:hover {
-      background-color: #f1f1f1;
-    }
-
     .dataTable_card {
-      border: 1px solid #ced4da; /* Add card border */
+      border: 1px solid #ced4da;
       border-radius: 0.5rem;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
     .dataTable_card .card-header {
-      background-color:  #A26D2B;
+      background-color: #A26D2B;
       color: white;
       font-weight: bold;
+    }
+    .action-icons i {
+      color: black;
+      cursor: pointer;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
-  
-<?php
-// Include the database connection settings
-include('config.php');
-$successMessage = '';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Retrieve form data from the POST request
-    $full_name = $_POST['full_name'];
-    $dob = $_POST['dob'];
-    $gender = $_POST['gender'];
-    $phone_number = $_POST['phone_number'];
-    $date_of_joining = $_POST['date_of_joining'];
-    $emergency_contact_number = $_POST['emergency_contact_number'];
-    $blood_group = $_POST['blood_group'];
-    $medical_conditions = $_POST['medical_conditions'];
-    $mobility_status = $_POST['mobility_status'];
-    $discharge = $_POST['discharge'];
-    $age_of_the_patient = $_POST['age_of_the_patient'];
-    $address = $_POST['address'];
-
-    // Prepare the SQL query to insert data into the database
-    $sql = "INSERT INTO user (full_name, dob, gender, phone_number, date_of_joining, emergency_contact_number, blood_group, medical_conditions, mobility_status, discharge, age_of_the_patient, address) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    // Prepare the statement
-    $stmt = $conn->prepare($sql);
-    
-    // Bind parameters to the SQL query (s = string, i = integer, d = double, b = blob)
-    $stmt->bind_param("ssssssssssss", $full_name, $dob, $gender, $phone_number, $date_of_joining, $emergency_contact_number, $blood_group, $medical_conditions, $mobility_status, $discharge, $age_of_the_patient, $address);
-
-    // Execute the query
-    if ($stmt->execute()) {
-        $successMessage = "Form submitted successfully!";
-    } else {
-        $successMessage = "Error: " . $stmt->error;
-    }
-
-    // Close the statement
-    $stmt->close();
-}
-
-// Close the connection
-$conn->close();
-?>
-
-<?php include('navbar.php'); ?>
-
-<div class="container mt-7">
+  <div class="container mt-7">
     <div class="dataTable_card card">
-      <!-- Card Header -->
-      <div class="card-header"> Customer Data Table</div>
-
-      <!-- Card Body -->
+      <div class="card-header">Customer Master Table</div>
       <div class="card-body">
-        <!-- Search Input -->
-        <div class="dataTable_search mb-3">
-          <input type="text" class="form-control" id="globalSearch" placeholder="Search...">
+        <div class="mb-3 d-flex justify-content-between">
+          <form method="GET" action="" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search..." value="<?php echo htmlspecialchars($searchTerm); ?>">
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+          <a href="customer_form1.php" class="btn btn-success">+ Add Customer</a>
         </div>
-
-        <!-- Table -->
         <div class="table-responsive">
-        <table class="table table-striped">
-    <thead>
-      <tr class="dataTable_headerRow">
-        <th>S.no</th>
-        <th>Full Name</th>
-        <th>Age</th>
-        <th>Mobile</th>
-        <th>Emergency Contact </th>
-        <th>Blood Group</th>
-        <th>Actions</th> <!-- New Column for Actions -->
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-      <!-- Dynamic Rows Will Be Added Here -->
-    </tbody>
-  </table>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Patient Name</th>
+                <th>Emergency Contact</th>
+                <th>Email</th>
+                <th>Gender</th>
+                <th>Date of Joining</th>
+                <th>Blood Group</th>
+                <th>Age</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+              if ($result->num_rows > 0) {
+                  $serial = $start + 1;
+                  while ($row = $result->fetch_assoc()) {
+                      echo "<tr>
+                              <td>{$serial}</td>
+                              <td>{$row['patient_name']}</td>
+                              <td>{$row['emergency_contact_number']}</td>
+                              <td>{$row['email']}</td>
+                              <td>{$row['gender']}</td>
+                              <td>{$row['date_of_joining']}</td>
+                              <td>{$row['blood_group']}</td>
+                              <td>{$row['patient_age']}</td>
+                            <td class='action-icons'>
+                                <i class='fas fa-eye' data-bs-toggle='modal' data-bs-target='#viewModal' onclick='viewDetails(".json_encode($row).")'></i>
+                                <a href='customer-edit.php?id={$row['id']}'><i class='fas fa-edit'></i></a>
+                                <a href='delete_customer.php?id={$row['id']}' onclick='return confirm(\"Are you sure you want to delete?\")'><i class='fas fa-trash'></i></a>
+                              </td>
+                            </tr>";
+                      $serial++;
+                  }
+              } else {
+                  echo "<tr><td colspan='9'>No records found</td></tr>";
+              }
+              ?>
+            </tbody>
+          </table>
         </div>
-
-        <!-- Pagination Controls -->
         <div class="d-flex align-items-center justify-content-between mt-3">
           <div>
             <button id="previousPage" class="btn btn-sm btn-primary me-2">Previous</button>
@@ -139,153 +142,67 @@ $conn->close();
             </select>
           </div>
         </div>
-        <!-- Card Header -->
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       </div>
     </div>
   </div>
 
+  <!-- Modal -->
+  <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Customer Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalContent">
+          <!-- Content populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
   <script>
-   let data = []; // Will be populated dynamically
-let pageIndex = 0;
-let pageSize = 5;
-
-const tableBody = document.getElementById("tableBody");
-const pageInfo = document.getElementById("pageInfo");
-const previousPage = document.getElementById("previousPage");
-const nextPage = document.getElementById("nextPage");
-const pageSizeSelect = document.getElementById("pageSize");
-const globalSearch = document.getElementById("globalSearch");
-
-// Fetch data from the server
-async function fetchData() {
-    try {
-        const response = await fetch('fetch_data.php');
-        if (response.ok) {
-            data = await response.json();
-            renderTable();
-        } else {
-            console.error('Failed to fetch data.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
+    function viewDetails(data) {
+      const modalContent = document.getElementById('modalContent');
+      modalContent.innerHTML = `
+        <table class="table table-bordered">
+            <tr><th>Patient Status</th><td>${data.patient_status}</td></tr>
+            <tr><th>Patient Name</th><td>${data.patient_name}</td></tr>
+            <tr><th>Relationship</th><td>${data.relationship}</td></tr>
+            <tr><th>Full Name</th><td>${data.full_name}</td></tr>
+            <tr><th>Phone Number</th><td>${data.emergency_contact_number}</td></tr>
+            <tr><th>Date of Joining</th><td>${data.date_of_joining}</td></tr>
+            <tr><th>Blood Group</th><td>${data.blood_group}</td></tr>
+            <tr><th>Medical Conditions</th><td>${data.medical_conditions}</td></tr>
+            <tr><th>Email</th><td>${data.email}</td></tr>
+            <tr><th>Patient Age</th><td>${data.patient_age}</td></tr>
+            <tr><th>Gender</th><td>${data.gender}</td></tr>
+            <tr><th>Care Requirements</th><td>${data.care_requirements}</td></tr>
+            <tr><th>Created At</th><td>${data.created_at}</td></tr>
+            <tr><th>Updated At</th><td>${data.updated_at}</td></tr>
+            <tr><th>Mobility Status</th><td>${data.mobility_status}</td></tr>
+            <tr><th>Address</th><td>${data.address}</td></tr>
+            <tr><th>Aadhar</th><td><a href='uploads/${data.care_aadhar}' target='_blank'>View Aadhar</a></td></tr>
+            <tr><th>Discharge</th><td><a href='uploads/${data.discharge}' target='_blank'>View Discharge</a></td></tr>
+        </table>
+      `;
     }
-}
 
-// Render table rows
-function renderTable() {
-    const start = pageIndex * pageSize;
-    const filteredData = data.filter((item) =>
-        item.full_name.toLowerCase().includes(globalSearch.value.toLowerCase())
-    );
-    const pageData = filteredData.slice(start, start + pageSize);
-
-    tableBody.innerHTML = pageData
-        .map(
-            (row) =>
-                `<tr class="dataTable_row">
-                    <td>${row.id}</td>
-                    <td>${row.full_name}</td>
-                    <td>${row.age || 'N/A'}</td>
-                    <td>${row.phone_number || 'N/A'}</td>
-                    <td>${row.emergency_contact_number || 'N/A'}</td>
-                    <td>${row.blood_group || 'N/A'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary view-btn" data-id="${row.id}">
-                            View
-                        </button>
-                        <button class="btn btn-sm btn-warning edit-btn" data-id="${row.id}">
-                            Edit
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="${row.id}">
-                            Delete
-                        </button>
-                    </td>
-                </tr>`
-        )
-        .join("");
-
-    pageInfo.textContent = `${pageIndex + 1} of ${Math.ceil(filteredData.length / pageSize)}`;
-    previousPage.disabled = pageIndex === 0;
-    nextPage.disabled = pageIndex >= Math.ceil(filteredData.length / pageSize) - 1;
-
-    // Add event listeners for View, Edit, and Delete buttons
-    document.querySelectorAll(".view-btn").forEach((btn) =>
-        btn.addEventListener("click", (e) => handleView(e.target.dataset.id))
-    );
-    document.querySelectorAll(".edit-btn").forEach((btn) =>
-        btn.addEventListener("click", (e) => handleEdit(e.target.dataset.id))
-    );
-    document.querySelectorAll(".delete-btn").forEach((btn) =>
-        btn.addEventListener("click", (e) => handleDelete(e.target.dataset.id))
-    );
-}
-
-function handleView(id) {
-    const record = data.find((item) => item.id == id);
-    if (record) {
-        alert(`Details:\n\nFull Name: ${record.full_name}\nAge: ${record.age}\nPhone: ${record.phone_number}`);
-    } else {
-        alert("Record not found.");
+    function changePage(direction) {
+      const urlParams = new URLSearchParams(window.location.search);
+      let pageIndex = parseInt(urlParams.get('pageIndex') || 0);
+      let pageSize = parseInt(urlParams.get('pageSize') || 5);
+      pageIndex += direction;
+      urlParams.set('pageIndex', pageIndex);
+      window.location.search = urlParams.toString();
     }
-}
-
-
-function handleEdit(id) {
-    const record = data.find((item) => item.id == id);
-    if (record) {
-        // Open edit modal or form with the data
-        console.log("Edit Record", record);
-        alert("Edit functionality can be implemented to open a form prefilled with details!");
-    } else {
-        alert("Record not found.");
-    }
-}
-
-function handleDelete(id) {
-    if (confirm("Are you sure you want to delete this record?")) {
-        // Send a request to delete the record on the server
-        fetch(`delete_data.php?id=${id}`, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    alert("Record deleted successfully!");
-                    fetchData(); // Reload data
-                } else {
-                    alert("Failed to delete record.");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-    }
-}
-
-// Navigation buttons
-previousPage.addEventListener("click", () => {
-    if (pageIndex > 0) {
-        pageIndex--;
-        renderTable();
-    }
-});
-
-nextPage.addEventListener("click", () => {
-    if (pageIndex < Math.ceil(data.length / pageSize) - 1) {
-        pageIndex++;
-        renderTable();
-    }
-});
-
-pageSizeSelect.addEventListener("change", (e) => {
-    pageSize = parseInt(e.target.value);
-    renderTable();
-});
-
-globalSearch.addEventListener("input", renderTable);
-
-// Fetch and render data on page load
-fetchData();
-
   </script>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
