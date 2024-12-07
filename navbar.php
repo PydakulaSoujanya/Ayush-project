@@ -96,7 +96,7 @@
                 </div>
             </div> -->
             <div class="navbar-item">
-    <a href="manage_employee.php" class="navbar-link">EMPLOYEES</a>
+    <a href="table.php" class="navbar-link">EMPLOYEES</a>
 </div>
             <div class="navbar-dropdown" onmouseover="toggleDropdown('utility')" onmouseout="toggleDropdown('utility')">
                 <span class="navbar-dropdown-title">

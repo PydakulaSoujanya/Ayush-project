@@ -4,7 +4,7 @@ session_start();
 include('config.php'); // Your database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form data
+    // Get form data with null as a default if a key is missing
     $name = $_POST['name'] ?? null;
     $dob = $_POST['dob'] ?? null;
     $gender = $_POST['gender'] ?? null;
@@ -29,22 +29,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $vendor_id = $_POST['vendor_id'] ?? null;
     $vendor_contact = $_POST['vendor_contact'] ?? null;
 
-    // Upload directory
-    $uploadDir = "uploads/";
+    // Handle file uploads
+$uploadDir = "uploads/";
+$adhar_upload_doc = uploadFile($_FILES['adhar_upload_doc'] ?? null, $uploadDir, "Adhar Upload Document");
+$document1 = uploadFile($_FILES['document1'] ?? null, $uploadDir, "Document 1");
+$document2 = uploadFile($_FILES['document2'] ?? null, $uploadDir, "Document 2");
+$document3 = uploadFile($_FILES['document3'] ?? null, $uploadDir, "Document 3");
+$document4 = uploadFile($_FILES['document4'] ?? null, $uploadDir, "Document 4");
 
-    // File upload handling
-    $adhar_upload_doc = uploadFile($_FILES['adhar_upload_doc'] ?? null, $uploadDir, "Adhar Upload Document");
-    $document1 = uploadFile($_FILES['document1'] ?? null, $uploadDir, "Document 1");
-    $document2 = uploadFile($_FILES['document2'] ?? null, $uploadDir, "Document 2");
-    $document3 = uploadFile($_FILES['document3'] ?? null, $uploadDir, "Document 3");
-    $document4 = uploadFile($_FILES['document4'] ?? null, $uploadDir, "Document 4");
-    $police_verification_form = null;
+// Handle police verification form if applicable
+$police_verification_form = null;
+if ($police_verification === 'verified') {
+    $police_verification_form = uploadFile($_FILES['verification_document'] ?? null, $uploadDir, "Police Verification Document");
+}
 
-    if ($police_verification === 'verified') {
-        $police_verification_form = uploadFile($_FILES['verification_document'] ?? null, $uploadDir, "Police Verification Document");
-    }
 
-    // Prepare the SQL statement
+    // Prepare and execute the SQL statement with all form data
     $stmt = $conn->prepare("INSERT INTO emp_info 
         (name, dob, gender, phone, email, role, qualification, experience, doj, aadhar, police_verification, police_verification_form, status, daily_rate8, daily_rate12, daily_rate24, adhar_upload_doc, document1, document2, document3, document4, reference, vendor_name, vendor_id, vendor_contact, bank_name, bank_account_no, ifsc_code, address) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -82,36 +82,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $address
     );
 
-    // Execute and check
     if ($stmt->execute()) {
-        echo "<script>
-                alert('Successfully added record');
-                window.location.href = 'table.php';
-              </script>";
+        $_SESSION['alert_message'] = "Employee record added successfully!";
+        $_SESSION['alert_type'] = "success";
     } else {
-        echo "<script>
-                alert('Error: " . $stmt->error . "');
-              </script>";
+        $_SESSION['alert_message'] = "Error: " . $stmt->error;
+        $_SESSION['alert_type'] = "danger";
     }
+
+    // Redirect back to the form
+    header("Location: emp-form.php");
+    exit;
 }
 
-// Close connection
-$conn->close();
+mysqli_close($conn);
 
-// File upload function
 function uploadFile($file, $targetDir, $fieldName) {
     if (isset($file) && $file['error'] == 0) {
-        // Ensure the target directory exists
-        if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0777, true);
-        }
-        $filePath = $targetDir . uniqid() . "_" . basename($file["name"]);
+        $filePath = $targetDir . basename($file["name"]);
         if (move_uploaded_file($file["tmp_name"], $filePath)) {
-            return $filePath; // Return file path to store in DB
+            return $filePath;
         } else {
-            echo "<script>alert('Error uploading $fieldName.');</script>";
+            $_SESSION['alert_message'] = "Error uploading $fieldName.";
+            $_SESSION['alert_type'] = "danger";
+            header("Location: emp-form.php");
+            exit;
         }
     }
-    return null; // Return null if no file was uploaded
+    // If no file uploaded, return NULL (or empty string based on your database constraints)
+    return null;
 }
+
 ?>

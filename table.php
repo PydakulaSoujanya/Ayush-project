@@ -2,14 +2,12 @@
 include('config.php');
 
 // Fetch Data
-// Fetch Data
 $query = "SELECT * FROM emp_info ORDER BY id DESC"; // Order by id descending
 $result = $conn->query($query);
 
 if (!$result) {
     die("Query failed: " . $conn->error);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -72,11 +70,8 @@ if (!$result) {
   <a href="emp-form.php" class="btn btn-primary ms-auto">Add Employee</a>
 </div>
 
-
-
         <!-- Table -->
         <div class="table-responsive">
-
          <table class="table table-bordered">
             <thead>
               <tr>
@@ -97,23 +92,43 @@ if (!$result) {
                   <td><?= htmlspecialchars($row['phone']); ?></td>
                   <td><?= ucfirst(htmlspecialchars($row['role'])); ?></td>
                   <td>
-  <a href="emp-view.php?id=<?= $row['id']; ?>" class="btn btn-sm" style="color: black;" title="View">
-    <i class="fas fa-eye"></i>
-  </a>
-  <a href="emp-edit.php?id=<?= $row['id']; ?>" class="btn btn-sm" style="color: black;" title="Edit">
-    <i class="fas fa-edit"></i>
-  </a>
-  <a href="javascript:void(0)" onclick="confirmDeletion(<?= $row['id']; ?>)" class="btn btn-sm" style="color: black;" title="Delete">
-    <i class="fas fa-trash"></i>
-  </a>
-  </a>
-</td>
-
+                    <a href="#" class="btn btn-sm view-btn" style="color: black;" data-id="<?php echo $row['id']; ?>" title="View">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="emp-edit.php?id=<?= $row['id']; ?>" class="btn btn-sm" style="color: black;" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="javascript:void(0)" onclick="confirmDeletion(<?= $row['id']; ?>)" class="btn btn-sm" style="color: black;" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                  </td>
                 </tr>
               <?php endwhile; ?>
             </tbody>
           </table>
         </div>
+       <!-- Modal for Employee Details -->
+<div class="modal fade" id="employeeDetailsModal" tabindex="-1" aria-labelledby="employeeDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="employeeDetailsModalLabel">Employee Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tbody id="employeeDetails">
+                        <!-- Employee details will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
         <!-- Pagination Controls -->
         <div class="d-flex align-items-center justify-content-between mt-3">
@@ -136,88 +151,74 @@ if (!$result) {
     </div>
   </div>
 
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
-    // Sample Data
-    const data = Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      name: `Person ${i + 1}`,
-      age: Math.floor(Math.random() * 40) + 20,
-      city: `City ${Math.floor(Math.random() * 10) + 1}`,
-    }));
-
-    // Pagination Variables
-    let pageIndex = 0;
-    let pageSize = 5;
-
-    // Elements
-    const tableBody = document.getElementById("tableBody");
-    const pageInfo = document.getElementById("pageInfo");
-    const previousPage = document.getElementById("previousPage");
-    const nextPage = document.getElementById("nextPage");
-    const pageSizeSelect = document.getElementById("pageSize");
-    const globalSearch = document.getElementById("globalSearch");
-
-    // Functions to Render Table
-    function renderTable() {
-      const start = pageIndex * pageSize;
-      const filteredData = data.filter((item) =>
-        item.name.toLowerCase().includes(globalSearch.value.toLowerCase())
-      );
-      const pageData = filteredData.slice(start, start + pageSize);
-
-      tableBody.innerHTML = pageData
-        .map(
-          (row) =>
-            `<tr class="dataTable_row">
-              <td>${row.id}</td>
-              <td>${row.name}</td>
-              <td>${row.age}</td>
-              <td>${row.city}</td>
-            </tr>`
-        )
-        .join("");
-
-      pageInfo.textContent = `${pageIndex + 1} of ${Math.ceil(filteredData.length / pageSize)}`;
-      previousPage.disabled = pageIndex === 0;
-      nextPage.disabled = pageIndex >= Math.ceil(filteredData.length / pageSize) - 1;
-    }
-
-    // Event Listeners
-    previousPage.addEventListener("click", () => {
-      if (pageIndex > 0) {
-        pageIndex--;
-        renderTable();
-      }
-    });
-
-    nextPage.addEventListener("click", () => {
-      pageIndex++;
-      renderTable();
-    });
-
-    pageSizeSelect.addEventListener("change", (e) => {
-      pageSize = Number(e.target.value);
-      pageIndex = 0;
-      renderTable();
-    });
-
-    globalSearch.addEventListener("input", () => {
-      pageIndex = 0;
-      renderTable();
-    });
-
-    // Initial Render
-    renderTable();
-
-    
-  </script>
-  <script>
-function confirmDeletion(id) {
-    if (confirm("Are you sure you want to delete this employee?")) {
+    function confirmDeletion(id) {
+      if (confirm("Are you sure you want to delete this employee?")) {
         window.location.href = `emp_delete.php?id=${id}`;
+      }
     }
-}
-</script>
+
+    $(document).on('click', '.view-btn', function(e) {
+    e.preventDefault();
+    const employeeId = $(this).data('id');
+
+    // Fetch employee data using AJAX
+    $.ajax({
+        url: 'fetch_employee_data.php', // Backend script to fetch data
+        type: 'POST',
+        data: { id: employeeId },
+        dataType: 'json',
+        success: function(response) {
+            if (response.error) {
+                alert(response.error);
+            } else {
+                let detailsHtml = '';
+                for (let key in response) {
+                    if (key.includes('document') && response[key]) {
+                        // Display document fields as download links
+                        detailsHtml += `
+                            <tr>
+                                <th>${key.replace(/_/g, ' ').toUpperCase()}</th>
+                                <td><a href="uploads/${response[key]}" target="_blank">Download</a></td>
+                            </tr>
+                        `;
+                    } else if (key === 'police_verification_form' && response[key]) {
+                        // Display police verification form as a download link
+                        detailsHtml += `
+                            <tr>
+                                <th>Police Verification Form</th>
+                                <td><a href="uploads/${response[key]}" target="_blank">Download</a></td>
+                            </tr>
+                        `;
+                    } else {
+                        // For other fields, just display the value
+                        detailsHtml += `
+                            <tr>
+                                <th>${key.replace(/_/g, ' ').toUpperCase()}</th>
+                                <td>${response[key]}</td>
+                            </tr>
+                        `;
+                    }
+                }
+                $('#employeeDetails').html(detailsHtml);
+                $('#employeeDetailsModal').modal('show'); // Show the modal
+            }
+        },
+        error: function() {
+            alert('Failed to fetch employee details.');
+        }
+    });
+});
+
+
+  </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 </html>

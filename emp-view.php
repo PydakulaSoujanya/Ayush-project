@@ -73,25 +73,25 @@ if ($result && $result->num_rows > 0) {
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Employee ID</label>
-                <input type="text" value="<?= $employee['id']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['id']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Name</label>
-                <input type="text" value="<?= $employee['name']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['name']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Date of Birth</label>
-                <input type="date" value="<?= $employee['dob']; ?>" class="styled-input" readonly>
+                <input type="date" value="<?= htmlspecialchars($employee['dob']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Gender</label>
-                <input type="text" value="<?= $employee['gender']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['gender']); ?>" class="styled-input" readonly>
             </div>
         </div>
     </div>
@@ -101,25 +101,25 @@ if ($result && $result->num_rows > 0) {
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Phone</label>
-                <input type="text" value="<?= $employee['phone']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['phone']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Email</label>
-                <input type="email" value="<?= $employee['email']; ?>" class="styled-input" readonly>
+                <input type="email" value="<?= htmlspecialchars($employee['email']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Designation</label>
-                <input type="text" value="<?= $employee['role']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['role']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Department</label>
-                <input type="text" value="<?= $employee['qualification']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['qualification']); ?>" class="styled-input" readonly>
             </div>
         </div>
     </div>
@@ -129,129 +129,142 @@ if ($result && $result->num_rows > 0) {
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Experience</label>
-                <input type="text" value="<?= $employee['experience']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['experience']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Date of Joining</label>
-                <input type="date" value="<?= $employee['doj']; ?>" class="styled-input" readonly>
+                <input type="date" value="<?= htmlspecialchars($employee['doj']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Aadhar</label>
-                <input type="text" value="<?= $employee['aadhar']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['aadhar']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Police Verification</label>
-                <input type="text" value="<?= $employee['police_verification']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['police_verification']); ?>" class="styled-input" readonly>
             </div>
         </div>
     </div>
 
-    <!-- Daily Rate, Status, Termination Date, Document -->
+    <!-- Status, Daily Rate, Document -->
     <div class="row">
-      
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Status</label>
-                <input type="text" value="<?= $employee['status']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['status']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
-            <label class="input-label">Daily Rate(8)</label>
-            <input type="number" value="<?= $employee['daily_rate8']; ?>" class="styled-input" readonly>
+                <label class="input-label">Daily Rate(8)</label>
+                <input type="number" value="<?= htmlspecialchars($employee['daily_rate8']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
-            <label class="input-label">Daily Rate(12)</label>
-            <input type="number" value="<?= $employee['daily_rate12']; ?>" class="styled-input" readonly>
+                <label class="input-label">Daily Rate(12)</label>
+                <input type="number" value="<?= htmlspecialchars($employee['daily_rate12']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
-            <label class="input-label">Daily Rate(24)</label>
-            <input type="number" value="<?= $employee['daily_rate24']; ?>" class="styled-input" readonly>
+                <label class="input-label">Daily Rate(24)</label>
+                <input type="number" value="<?= htmlspecialchars($employee['daily_rate24']); ?>" class="styled-input" readonly>
             </div>
         </div>
-        <div class="col-md-3">
-    <div class="input-field-container">
-        <div class="row">
-            <div class="col-md-10">
+       
+    <div class="col-md-6">
+        <div class="input-field-container">
+            <label class="input-label">Aadhar Document</label>
+            <?php if (isset($employee['adhar_upload_doc']) && !empty($employee['adhar_upload_doc'])): ?>
+                <p class="uploaded-document mt-2">
+                    <a href="<?= htmlspecialchars($employee['adhar_upload_doc']); ?>" target="_blank" title="View Aadhar Document">
+                        <i class="bi bi-file-earmark-text" style="font-size: 24px; color: #007bff;"></i> View Document
+                    </a>
+                </p>
+            <?php else: ?>
+                <p class="uploaded-document mt-2 text-muted">No Aadhar document uploaded.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+
+
+  
+
+    
+    <div class="col-md-6">
+        <div class="input-field-container">
             <label class="input-label">Document</label>
-            <input type="text" value="<?= $employee['document']; ?>" class="styled-input" readonly>
-            </div>
-            <div class="col-md-2">
- <!-- View existing document as an icon link -->
- <?php if (!empty($employee['document'])): ?>
-            <p class="uploaded-document mt-2">
-                <a href="<?= $employee['document']; ?>" target="_blank" title="View Document">
-                    <i class="bi bi-file-earmark-text" style="font-size: 24px; color: #007bff;"></i>
-                </a>
-            </p>
-        <?php else: ?>
-            <p class="uploaded-document mt-2 text-muted">No document uploaded.</p>
-        <?php endif; ?>
-            </div>
+            <?php if (isset($employee['document']) && !empty($employee['document'])): ?>
+                <p class="uploaded-document mt-2">
+                    <a href="<?= htmlspecialchars($employee['document']); ?>" target="_blank" title="View Document">
+                        <i class="bi bi-file-earmark-text" style="font-size: 24px; color: #007bff;"></i> View Document
+                    </a>
+                </p>
+            <?php else: ?>
+                <p class="uploaded-document mt-2 text-muted">No document uploaded.</p>
+            <?php endif; ?>
         </div>
     
-       
-    </div>
 </div>
 
 
+
+    <!-- Bank Details -->
+    <div class="row">
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Bank Name</label>
-                <input type="text" value="<?= $employee['bank_name']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['bank_name']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">Bank Account No</label>
-                <input type="text" value="<?= $employee['bank_account_no']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['bank_account_no']); ?>" class="styled-input" readonly>
             </div>
         </div>
         <div class="col-md-3">
             <div class="input-field-container">
                 <label class="input-label">IFSC Code</label>
-                <input type="text" value="<?= $employee['ifsc_code']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['ifsc_code']); ?>" class="styled-input" readonly>
             </div>
         </div>
 
     </div>
-<!-- Hidden Fields for Vendor Name and Contact -->
-<div class="col-md-3" id="vendorFields" style="display: none;">
-  <div class="input-field-container">
-  <!-- <input type="text" name="vendor_id" class="styled-input"  /> -->
-    <label class="input-label">Vendor Name</label>
-    <select name="vendor_name" id="vendor_name" class="styled-input" required>
-            <option value="" disabled selected>Select Vendor</option>
-        </select>
-    <!-- <input type="text" name="vendor_name" class="styled-input" placeholder="Enter Vendor Name" /> -->
-  </div>
-</div>
-<div class="col-md-3" id="vendorContactField" style="display: none;">
-  <div class="input-field-container">
-    <label class="input-label">Vendor Contact Number</label>
-    <input type="text" name="vendor_contact" class="styled-input" placeholder="Enter Vendor Contact Number" pattern="[0-9]{10}" />
-  </div>
+    <div class="row">
+    <?php if (isset($employee['vendor_name']) && !empty($employee['vendor_name'])): ?>
+    <div class="col-md-3">
+        <div class="input-field-container">
+            <label class="input-label">Vendor Name</label>
+            <input type="text" value="<?= htmlspecialchars($employee['vendor_name']); ?>" class="styled-input" readonly>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?php if (isset($employee['vendor_contact']) && !empty($employee['vendor_contact'])): ?>
+    <div class="col-md-3">
+        <div class="input-field-container">
+            <label class="input-label">Vendor Contact</label>
+            <input type="text" value="<?= htmlspecialchars($employee['vendor_contact']); ?>" class="styled-input" readonly>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
-    <!-- Bank Name, Account No, IFSC Code, Address -->
+    <!-- Address -->
     <div class="row">
-       
-        
-       
         <div class="col-md-6">
             <div class="input-field-container">
                 <label class="input-label">Address</label>
-                <input type="text" value="<?= $employee['address']; ?>" class="styled-input" readonly>
+                <input type="text" value="<?= htmlspecialchars($employee['address']); ?>" class="styled-input" readonly>
             </div>
         </div>
     </div>

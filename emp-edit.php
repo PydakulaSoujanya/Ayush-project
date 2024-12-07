@@ -56,6 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
         $target_dir = "uploads/";
         $document = $target_dir . basename($_FILES['document']['name']);
         move_uploaded_file($_FILES['document']['tmp_name'], $document);
+    } else {
+        // If no new document is uploaded, retain the old document
+        $document = $employee['document']; // Retain the old document if no new file is uploaded
     }
 
     // Prepare the update query
@@ -148,209 +151,161 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
 <?php include('navbar.php'); ?>
   <div class="container mt-7">
     <h3 class="mb-4">Edit Employee</h3>
-    <form method="POST" enctype="multipart/form-data" action="update_emp.php">
-    <!-- Row 1 -->
-    <div class="row">
-        <input type="hidden" name="id" value="<?= htmlspecialchars($employee['id']); ?>">
+    <form action="update_emp.php" method="POST" enctype="multipart/form-data">
+    <!-- Hidden ID Field -->
+    <input type="hidden" name="id" value="<?= htmlspecialchars($employee['id']); ?>">
 
+    <!-- Basic Details -->
+    
+    <div class="row">
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Name</label>
-                <input type="text" name="name" class="styled-input" value="<?= htmlspecialchars($employee['name']); ?>" required />
-            </div>
+            <label class="input-label">Name</label>
+            <input type="text" name="name" class="styled-input" value="<?= htmlspecialchars($employee['name']); ?>" required />
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Date of Birth</label>
-                <input type="date" name="dob" class="styled-input" value="<?= htmlspecialchars($employee['dob']); ?>" required />
-            </div>
+            <label class="input-label">Date of Birth</label>
+            <input type="date" name="dob" class="styled-input" value="<?= htmlspecialchars($employee['dob']); ?>" required />
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Gender</label>
-                <select name="gender" class="styled-input" required>
-                    <option value="male" <?= $employee['gender'] == 'male' ? 'selected' : ''; ?>>Male</option>
-                    <option value="female" <?= $employee['gender'] == 'female' ? 'selected' : ''; ?>>Female</option>
-                    <option value="other" <?= $employee['gender'] == 'other' ? 'selected' : ''; ?>>Other</option>
-                </select>
-            </div>
+            <label class="input-label">Gender</label>
+            <select name="gender" class="styled-input">
+                <option value="Male" <?= $employee['gender'] == 'Male' ? 'selected' : ''; ?>>Male</option>
+                <option value="Female" <?= $employee['gender'] == 'Female' ? 'selected' : ''; ?>>Female</option>
+                <option value="Other" <?= $employee['gender'] == 'Other' ? 'selected' : ''; ?>>Other</option>
+            </select>
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Phone Number</label>
-                <input type="tel" name="phone" class="styled-input" value="<?= htmlspecialchars($employee['phone']); ?>" pattern="[0-9]{10}" required />
-            </div>
+            <label class="input-label">Phone</label>
+            <input type="tel" name="phone" class="styled-input" value="<?= htmlspecialchars($employee['phone']); ?>" pattern="[0-9]{10}" required />
         </div>
     </div>
 
-    <!-- Row 2 -->
-    <div class="row">
+    <!-- Contact Details -->
+    <div class="row mt-3">
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Email</label>
-                <input type="email" name="email" class="styled-input" value="<?= htmlspecialchars($employee['email']); ?>" required />
-            </div>
+            <label class="input-label">Email</label>
+            <input type="email" name="email" class="styled-input" value="<?= htmlspecialchars($employee['email']); ?>" required />
         </div>
         <div class="col-md-3">
-    <div class="input-field-container">
-        <label class="input-label">Role</label>
-        <select name="role" class="styled-input" required>
-            <option value="" disabled <?= empty($employee['role']) ? 'selected' : ''; ?>>Select Role</option>
-            <option value="care_taker" <?= $employee['role'] == 'care_taker' ? 'selected' : ''; ?>>Care Taker</option>
-            <option value="nanny" <?= $employee['role'] == 'nanny' ? 'selected' : ''; ?>>Nanny</option>
-            <option value="fully_trained_nurse" <?= $employee['role'] == 'fully_trained_nurse' ? 'selected' : ''; ?>>Fully Trained Nurse</option>
-            <option value="semi_trained_nurse" <?= $employee['role'] == 'semi_trained_nurse' ? 'selected' : ''; ?>>Semi Trained Nurse</option>
-        </select>
-    </div>
-</div>
-
-        <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Qualification</label>
-                <select name="qualification" class="styled-input" required>
-                    <option value="10th" <?= $employee['qualification'] == '10th' ? 'selected' : ''; ?>>10th</option>
-                    <option value="intermediate" <?= $employee['qualification'] == 'intermediate' ? 'selected' : ''; ?>>Intermediate</option>
-                    <option value="degree" <?= $employee['qualification'] == 'degree' ? 'selected' : ''; ?>>Degree</option>
-                </select>
-            </div>
+            <label class="input-label">Role</label>
+            <input type="text" name="role" class="styled-input" value="<?= htmlspecialchars($employee['role']); ?>" required />
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Experience</label>
-                <select name="experience" class="styled-input" required>
-                    <option value="0-1" <?= $employee['experience'] == '0-1' ? 'selected' : ''; ?>>0 to 1 year</option>
-                    <option value="2-3" <?= $employee['experience'] == '2-3' ? 'selected' : ''; ?>>2 to 3 years</option>
-                    <option value="4-5" <?= $employee['experience'] == '4-5' ? 'selected' : ''; ?>>4 to 5 years</option>
-                </select>
-            </div>
+            <label class="input-label">Qualification</label>
+            <input type="text" name="qualification" class="styled-input" value="<?= htmlspecialchars($employee['qualification']); ?>" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Experience</label>
+            <input type="text" name="experience" class="styled-input" value="<?= htmlspecialchars($employee['experience']); ?>" />
         </div>
     </div>
 
-    <!-- Row 3 -->
-    <div class="row">
+    <!-- Employment Details -->
+    <div class="row mt-3">
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Date of Joining</label>
-                <input type="date" name="doj" class="styled-input" value="<?= htmlspecialchars($employee['doj']); ?>" required />
-            </div>
+            <label class="input-label">Date of Joining</label>
+            <input type="date" name="doj" class="styled-input" value="<?= htmlspecialchars($employee['doj']); ?>" />
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Aadhar Number</label>
-                <input type="text" name="aadhar" class="styled-input" value="<?= htmlspecialchars($employee['aadhar']); ?>" pattern="[0-9]{12}" required />
-            </div>
+            <label class="input-label">Employment Status</label>
+            <select name="status" class="styled-input">
+                <option value="Active" <?= $employee['status'] == 'Active' ? 'selected' : ''; ?>>Active</option>
+                <option value="Inactive" <?= $employee['status'] == 'Inactive' ? 'selected' : ''; ?>>Inactive</option>
+            </select>
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Police Verification</label>
-                <select name="police_verification" class="styled-input" required>
-                    <option value="verified" <?= $employee['police_verification'] == 'verified' ? 'selected' : ''; ?>>Verified</option>
-                    <option value="pending" <?= $employee['police_verification'] == 'pending' ? 'selected' : ''; ?>>Pending</option>
-                </select>
-            </div>
+            <label class="input-label">Aadhar Number</label>
+            <input type="text" name="aadhar" class="styled-input" value="<?= htmlspecialchars($employee['aadhar']); ?>" />
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Status</label>
-                <select name="status" class="styled-input" required>
-                    <option value="active" <?= $employee['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
-                    <option value="inactive" <?= $employee['status'] == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
-                </select>
-            </div>
+            <label class="input-label">Police Verification Number</label>
+            <input type="text" name="police_verification" class="styled-input" value="<?= htmlspecialchars($employee['police_verification']); ?>" />
         </div>
     </div>
 
-    <!-- Row 4 -->
-    <div class="row">
-        
-         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Daily Rate(8)</label>
-                <input type="number" name="daily_rate8" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate8']); ?>" required />
-            </div>
+    <!-- Documents -->
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label class="input-label">Police Verification Form</label>
+            <input type="file" name="police_verification_form" class="styled-input" />
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Daily Rate(12)</label>
-                <input type="number" name="daily_rate12" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate12']); ?>" required />
-            </div>
+            <label class="input-label">Daily Rate (8 hours)</label>
+            <input type="number" name="daily_rate8" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate8']); ?>" />
         </div>
         <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Daily Rate(24)</label>
-                <input type="number" name="daily_rate24" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate24']); ?>" required />
-            </div>
+            <label class="input-label">Daily Rate (12 hours)</label>
+            <input type="number" name="daily_rate12" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate12']); ?>" />
         </div>
         <div class="col-md-3">
-    <div class="input-field-container">
-    <div class="row">
-    <div class="col-md-10">
-        <label class="input-label">Documents</label>
-        
-        <!-- Input for uploading a new document -->
-        <input type="file" name="document" class="styled-input" />
-</div>
-<div class="col-md-2">
-        <!-- Display the currently uploaded document -->
-        <?php if (!empty($employee['document'])): ?>
-            <p class="uploaded-document">
-                <a href="<?= $employee['document']; ?>" target="_blank" title="View Document">
-                    <i class="bi bi-file-earmark-text" style="font-size: 24px; color: #007bff;"></i>
-                </a>
-            </p>
-        <?php else: ?>
-            <p class="uploaded-document mt-2 text-muted">No document uploaded.</p>
-        <?php endif; ?>
-    </div>
-</div>
-</div>
-</div>
-
-
-        <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Bank Name</label>
-                <input type="text" name="bank_name" class="styled-input" value="<?= htmlspecialchars($employee['bank_name']); ?>" required />
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">Bank Account Number</label>
-                <input type="text" name="bank_account_no" class="styled-input" value="<?= htmlspecialchars($employee['bank_account_no']); ?>" required />
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="input-field-container">
-                <label class="input-label">IFSC Code</label>
-                <input type="text" name="ifsc_code" class="styled-input" value="<?= htmlspecialchars($employee['ifsc_code']); ?>" required />
-            </div>
+            <label class="input-label">Daily Rate (24 hours)</label>
+            <input type="number" name="daily_rate24" class="styled-input" value="<?= htmlspecialchars($employee['daily_rate24']); ?>" />
         </div>
     </div>
 
-    <!-- Row 5 -->
-    <div class="row">
-       
-       
-        <div class="col-md-6">
-            <div class="input-field-container">
-                <label class="input-label">Address</label>
-                <textarea name="address" class="styled-input" rows="3" required><?= htmlspecialchars($employee['address']); ?></textarea>
-            </div>
+    <!-- Bank Details -->
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label class="input-label">Bank Name</label>
+            <input type="text" name="bank_name" class="styled-input" value="<?= htmlspecialchars($employee['bank_name']); ?>" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Bank Account Number</label>
+            <input type="text" name="bank_account_no" class="styled-input" value="<?= htmlspecialchars($employee['bank_account_no']); ?>" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">IFSC Code</label>
+            <input type="text" name="ifsc_code" class="styled-input" value="<?= htmlspecialchars($employee['ifsc_code']); ?>" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Vendor Name</label>
+            <input type="text" name="vendor_name" class="styled-input" value="<?= htmlspecialchars($employee['vendor_name']); ?>" />
+        </div>
+    </div>
+
+    <!-- Vendor Contact -->
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label class="input-label">Vendor ID</label>
+            <input type="text" name="vendor_id" class="styled-input" value="<?= htmlspecialchars($employee['vendor_id']); ?>" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Vendor Contact</label>
+            <input type="tel" name="vendor_contact" class="styled-input" value="<?= htmlspecialchars($employee['vendor_contact']); ?>" pattern="[0-9]{10}" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Aadhar Upload</label>
+            <input type="file" name="adhar_upload_doc" class="styled-input" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Document 1</label>
+            <input type="file" name="document1" class="styled-input" />
+        </div>
+    </div>
+
+    <!-- Additional Documents -->
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label class="input-label">Document 2</label>
+            <input type="file" name="document2" class="styled-input" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Document 3</label>
+            <input type="file" name="document3" class="styled-input" />
+        </div>
+        <div class="col-md-3">
+            <label class="input-label">Address</label>
+            <textarea name="address" class="styled-input"><?= htmlspecialchars($employee['address']); ?></textarea>
         </div>
     </div>
 
     <!-- Submit Button -->
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
+    <div class="input-field-container mt-3">
+        <button type="submit" class="btn btn-primary">Update Employee</button>
     </div>
 </form>
 
-  </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </div>
 </body>
 </html>
